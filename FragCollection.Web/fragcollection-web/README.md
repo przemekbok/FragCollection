@@ -1,46 +1,80 @@
-# Getting Started with Create React App
+# FragCollection Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A web application for managing your perfume collection, built with React, TypeScript, and Material UI.
+
+## Features
+
+- User authentication
+- Manage collections (private and public)
+- Track perfume entries (bottles and decants)
+- Calculate price per ml and total value
+- Fetch perfume information from Fragrantica
+- View other users' public collections
+
+## Prerequisites
+
+- Node.js 16+ and npm
+- Backend API running (see main project README)
+
+## Getting Started
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start the development server:
+
+```bash
+npm start
+```
+
+3. The app will open in your browser at http://localhost:3000
+
+## Project Structure
+
+- `src/components/` - React components
+  - `Collections/` - Collection management components
+  - `PerfumeEntries/` - Perfume entry components
+- `src/contexts/` - React contexts for state management
+- `src/services/` - API services for communicating with the backend
 
 ## Available Scripts
 
-In the project directory, you can run:
+- `npm start` - Run the development server
+- `npm test` - Run tests
+- `npm run build` - Build for production
+- `npm run eject` - Eject from create-react-app (not recommended)
 
-### `npm start`
+## API Configuration
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+The application is configured to connect to the backend API at `https://localhost:54378/api`. The proxy is set in `package.json`. If you need to change the API URL, modify the `API_URL` constant in `src/services/apiService.ts`.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Backend Integration
 
-### `npm test`
+The frontend communicates with the backend using the following services:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- `authApi` - User authentication (login, register, logout)
+- `collectionsApi` - Collection management
+- `perfumeEntriesApi` - Perfume entry management
 
-### `npm run build`
+## Deployment
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+To deploy the application for production:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. Build the app:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm run build
+```
 
-### `npm run eject`
+2. The built files will be in the `build` directory, ready to be served by any static file server.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Technologies Used
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- React 18
+- TypeScript
+- Material UI 5
+- React Router 6
+- Axios for API calls
