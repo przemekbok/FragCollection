@@ -34,9 +34,13 @@ export interface User {
   email: string;
   createdAt: string;
   lastLogin?: string;
-  token?: string; // Add token field
+  token?: string;
+  collectionName?: string;
+  collectionDescription?: string;
 }
 
+// This interface is kept for backward compatibility
+// In the new model, Collection data is part of the User model
 export interface Collection {
   id: string;
   name: string;
@@ -89,8 +93,15 @@ export interface PerfumeEntry {
   fragranticaUrl?: string;
   addedAt: string;
   updatedAt: string;
-  collectionId: string;
+  userId: string; // Now directly links to user instead of collection
   perfumeInfo?: PerfumeInfo;
+}
+
+export interface UserWithCollection {
+  id: string;
+  username: string;
+  collectionName: string;
+  collectionDescription: string;
 }
 
 // API endpoints for authentication
@@ -151,57 +162,50 @@ export const authApi = {
   }
 };
 
-// API endpoints for collections
-export const collectionsApi = {
-  getUserCollections: async () => {
-    const response = await apiClient.get<Collection[]>('/collections');
+// API endpoints for users and their collections
+export const userApi = {
+  // Get user profile (public view)
+  getUserProfile: async (username: string) => {
+    const response = await apiClient.get<UserWithCollection>(`/users/${username}`);
     return response.data;
   },
   
-  getPublicCollections: async (page: number = 1, pageSize: number = 10) => {
-    const response = await apiClient.get<Collection[]>(`/collections/public?page=${page}&pageSize=${pageSize}`);
+  // Get users with public entries
+  getUsersWithPublicEntries: async (page: number = 1, pageSize: number = 10) => {
+    const response = await apiClient.get<UserWithCollection[]>(`/users/public?page=${page}&pageSize=${pageSize}`);
     return response.data;
   },
   
-  getCollection: async (id: string) => {
-    const response = await apiClient.get<Collection>(`/collections/${id}`);
-    return response.data;
-  },
-  
-  createCollection: async (name: string, description: string, isPublic: boolean) => {
-    const response = await apiClient.post<Collection>('/collections', {
+  // Update collection information for current user
+  updateCollectionInfo: async (name: string, description: string) => {
+    await apiClient.put('/users/collection', {
       name,
-      description,
-      isPublic
-    });
-    return response.data;
-  },
-  
-  updateCollection: async (id: string, name: string, description: string, isPublic: boolean) => {
-    await apiClient.put(`/collections/${id}`, {
-      name,
-      description,
-      isPublic
+      description
     });
   },
   
-  deleteCollection: async (id: string) => {
-    await apiClient.delete(`/collections/${id}`);
+  // Get entries for a specific user (returns all entries for owner, public entries for others)
+  getUserEntries: async (username: string) => {
+    const response = await apiClient.get<PerfumeEntry[]>(`/users/${username}/entries`);
+    return response.data;
   }
 };
 
-// API endpoints for perfume entries
+// API endpoints for perfume entries (now directly linked to users)
 export const perfumeEntriesApi = {
-  getEntriesByCollection: async (collectionId: string) => {
-    const response = await apiClient.get<PerfumeEntry[]>(`/perfumeentries/collection/${collectionId}`);
+  // Get current user's entries
+  getUserEntries: async () => {
+    const response = await apiClient.get<PerfumeEntry[]>('/perfumeentries');
     return response.data;
   },
   
+  // Get a specific entry
   getEntry: async (id: string) => {
     const response = await apiClient.get<PerfumeEntry>(`/perfumeentries/${id}`);
     return response.data;
   },
   
+  // Create a new entry
   createEntry: async (entry: {
     name: string;
     brand?: string;
@@ -210,12 +214,12 @@ export const perfumeEntriesApi = {
     pricePerMl: number;
     isPublic: boolean;
     fragranticaUrl?: string;
-    collectionId: string;
   }) => {
     const response = await apiClient.post<PerfumeEntry>('/perfumeentries', entry);
     return response.data;
   },
   
+  // Update an entry
   updateEntry: async (id: string, entry: {
     name: string;
     brand?: string;
@@ -224,22 +228,71 @@ export const perfumeEntriesApi = {
     pricePerMl: number;
     isPublic: boolean;
     fragranticaUrl?: string;
-    collectionId: string;
   }) => {
     await apiClient.put(`/perfumeentries/${id}`, entry);
   },
   
+  // Update just the volume of an entry
   updateEntryVolume: async (id: string, volume: number) => {
     await apiClient.patch(`/perfumeentries/${id}/volume`, { volume });
   },
   
+  // Delete an entry
   deleteEntry: async (id: string) => {
     await apiClient.delete(`/perfumeentries/${id}`);
   }
 };
 
+// Legacy API for collections - can be removed once UI is fully updated
+// DEPRECATED - Use userApi instead
+export const collectionsApi = {
+  getUserCollections: async () => {
+    console.warn('Deprecated: getUserCollections is deprecated. Use userApi.getUserProfile instead.');
+    return []; // Return empty array to avoid breaking existing code
+  },
+  
+  getPublicCollections: async (page: number = 1, pageSize: number = 10) => {
+    console.warn('Deprecated: getPublicCollections is deprecated. Use userApi.getUsersWithPublicEntries instead.');
+    const users = await userApi.getUsersWithPublicEntries(page, pageSize);
+    // Convert to old format for backward compatibility
+    return users.map(user => ({
+      id: user.id, 
+      name: user.collectionName, 
+      description: user.collectionDescription,
+      isPublic: true, 
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      userId: user.id,
+      username: user.username
+    }));
+  },
+  
+  getCollection: async (id: string) => {
+    console.warn('Deprecated: getCollection is deprecated. Use userApi.getUserProfile instead.');
+    throw new Error('This method is deprecated');
+  },
+  
+  createCollection: async (name: string, description: string, isPublic: boolean) => {
+    console.warn('Deprecated: createCollection is deprecated. Use userApi.updateCollectionInfo instead.');
+    await userApi.updateCollectionInfo(name, description);
+    throw new Error('This method is deprecated');
+  },
+  
+  updateCollection: async (id: string, name: string, description: string, isPublic: boolean) => {
+    console.warn('Deprecated: updateCollection is deprecated. Use userApi.updateCollectionInfo instead.');
+    await userApi.updateCollectionInfo(name, description);
+  },
+  
+  deleteCollection: async (id: string) => {
+    console.warn('Deprecated: deleteCollection is deprecated and no longer available.');
+    throw new Error('This method is deprecated');
+  }
+};
+
 export default {
   auth: authApi,
-  collections: collectionsApi,
-  perfumeEntries: perfumeEntriesApi
+  user: userApi,
+  perfumeEntries: perfumeEntriesApi,
+  // Legacy export for backward compatibility
+  collections: collectionsApi
 };

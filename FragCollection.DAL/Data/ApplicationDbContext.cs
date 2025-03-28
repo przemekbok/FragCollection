@@ -11,10 +11,12 @@ namespace FragCollection.DAL.Data
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Collection> Collections { get; set; }
         public DbSet<PerfumeEntry> PerfumeEntries { get; set; }
         public DbSet<PerfumeInfo> PerfumeInfos { get; set; }
         public DbSet<PerfumeNote> PerfumeNotes { get; set; }
+        
+        // Collection is deprecated but kept for backward compatibility
+        public DbSet<Collection> Collections { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,11 +29,13 @@ namespace FragCollection.DAL.Data
                 entity.Property(e => e.Username).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.PasswordHash).IsRequired();
+                entity.Property(e => e.CollectionName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.CollectionDescription).HasMaxLength(500);
                 entity.HasIndex(e => e.Username).IsUnique();
                 entity.HasIndex(e => e.Email).IsUnique();
             });
 
-            // Collection configuration
+            // Collection is deprecated but kept for backward compatibility
             modelBuilder.Entity<Collection>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -39,12 +43,12 @@ namespace FragCollection.DAL.Data
                 entity.Property(e => e.Description).HasMaxLength(500);
                 
                 entity.HasOne(e => e.User)
-                      .WithMany(u => u.Collections)
+                      .WithMany()
                       .HasForeignKey(e => e.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // PerfumeEntry configuration
+            // PerfumeEntry configuration - updated to reference User directly
             modelBuilder.Entity<PerfumeEntry>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -54,9 +58,9 @@ namespace FragCollection.DAL.Data
                 entity.Property(e => e.PricePerMl).HasPrecision(10, 2);
                 entity.Property(e => e.FragranticaUrl).HasMaxLength(500);
                 
-                entity.HasOne(e => e.Collection)
-                      .WithMany(c => c.Entries)
-                      .HasForeignKey(e => e.CollectionId)
+                entity.HasOne(e => e.User)
+                      .WithMany(u => u.Entries)
+                      .HasForeignKey(e => e.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
                 
                 entity.HasOne(e => e.PerfumeInfo)

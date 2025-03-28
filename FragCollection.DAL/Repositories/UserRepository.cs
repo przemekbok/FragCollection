@@ -34,5 +34,16 @@ namespace FragCollection.DAL.Repositories
             return await _context.Users
                 .AnyAsync(u => u.Email.ToLower() == email.ToLower());
         }
+        
+        public async Task<IEnumerable<User>> GetUsersWithPublicEntriesAsync(int page = 1, int pageSize = 10)
+        {
+            // Get users who have at least one public entry
+            return await _context.Users
+                .Where(u => u.Entries.Any(e => e.IsPublic))
+                .OrderBy(u => u.Username)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
     }
 }

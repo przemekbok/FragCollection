@@ -9,7 +9,11 @@ namespace FragCollection.Core.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? LastLogin { get; set; }
         
+        // Collection info - now only one collection per user
+        public string CollectionName { get; set; } = "My Perfume Collection";
+        public string CollectionDescription { get; set; } = string.Empty;
+        
         // Navigation properties
-        public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();
+        public virtual ICollection<PerfumeEntry> Entries { get; set; } = new List<PerfumeEntry>();
     }
 }

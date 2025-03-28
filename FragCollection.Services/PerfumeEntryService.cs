@@ -17,9 +17,14 @@ namespace FragCollection.Services
             _perfumeInfoService = perfumeInfoService;
         }
 
-        public async Task<IEnumerable<PerfumeEntry>> GetEntriesByCollectionIdAsync(Guid collectionId)
+        public async Task<IEnumerable<PerfumeEntry>> GetEntriesByUserIdAsync(Guid userId)
         {
-            return await _perfumeEntryRepository.GetByCollectionIdAsync(collectionId);
+            return await _perfumeEntryRepository.GetByUserIdAsync(userId);
+        }
+
+        public async Task<IEnumerable<PerfumeEntry>> GetPublicEntriesByUserIdAsync(Guid userId)
+        {
+            return await _perfumeEntryRepository.GetPublicEntriesByUserIdAsync(userId);
         }
 
         public async Task<PerfumeEntry?> GetEntryByIdAsync(Guid id)

@@ -8,5 +8,6 @@ namespace FragCollection.IDAL.IRepositories
         Task<User?> GetByEmailAsync(string email);
         Task<bool> UsernameExistsAsync(string username);
         Task<bool> EmailExistsAsync(string email);
+        Task<IEnumerable<User>> GetUsersWithPublicEntriesAsync(int page = 1, int pageSize = 10);
     }
 }
