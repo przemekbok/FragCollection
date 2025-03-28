@@ -35,6 +35,8 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "fragcollection-web", "FragC
 		SlnRelativePath = "FragCollection.Web\fragcollection-web\"
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FragCollection.DTO", "FragCollection.DTO\FragCollection.DTO.csproj", "{F508E391-FFD4-4621-B65F-ADF9E6630E86}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{1854F9AA-F6DE-4D70-AE4D-CB02CD36D36F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1854F9AA-F6DE-4D70-AE4D-CB02CD36D36F}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{1854F9AA-F6DE-4D70-AE4D-CB02CD36D36F}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{F508E391-FFD4-4621-B65F-ADF9E6630E86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F508E391-FFD4-4621-B65F-ADF9E6630E86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F508E391-FFD4-4621-B65F-ADF9E6630E86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F508E391-FFD4-4621-B65F-ADF9E6630E86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

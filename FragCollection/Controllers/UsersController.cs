@@ -5,7 +5,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using FragCollection.DTO.User;
+using FragCollection.DTO.Auth;
 using FragCollection.DTO.Perfume;
 
 namespace FragCollection.Controllers

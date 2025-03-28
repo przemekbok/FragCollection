@@ -1,4 +1,4 @@
-namespace FragCollection.DTO.User
+namespace FragCollection.DTO.Auth
 {
     public class RegisterRequest
     {

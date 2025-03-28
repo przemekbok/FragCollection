@@ -3,7 +3,7 @@ using FragCollection.Core.Models;
 using FragCollection.IServices;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using FragCollection.DTOs.Perfume;
+using FragCollection.DTO.Perfume;
 
 namespace FragCollection.Controllers
 {

@@ -1,4 +1,4 @@
-namespace FragCollection.DTOs.User
+namespace FragCollection.DTO.Auth
 {
     public class CollectionUpdateRequest
     {

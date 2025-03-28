@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using FragCollection.Core.Models;
 
-namespace FragCollection.DTOs.User
+namespace FragCollection.DTO.Auth
 {
     public class UserResponse
     {

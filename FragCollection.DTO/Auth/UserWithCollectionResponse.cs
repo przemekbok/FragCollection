@@ -1,6 +1,6 @@
 using FragCollection.Core.Models;
 
-namespace FragCollection.DTOs.User
+namespace FragCollection.DTO.Auth
 {
     public class UserWithCollectionResponse
     {
