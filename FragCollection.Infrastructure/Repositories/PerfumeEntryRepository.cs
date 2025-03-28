@@ -1,6 +1,6 @@
 using FragCollection.Core.Models;
+using FragCollection.IDAL.IRepositories;
 using FragCollection.Infrastructure.Data;
-using FragCollection.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace FragCollection.Infrastructure.Repositories
