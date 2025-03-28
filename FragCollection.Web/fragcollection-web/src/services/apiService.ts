@@ -7,11 +7,25 @@ const API_URL = 'https://localhost:54378/api';
 // Create axios instance with credentials
 const apiClient = axios.create({
   baseURL: API_URL,
-  withCredentials: true, // Important for cookie-based auth
+  withCredentials: true, // Keep this for compatibility with existing cookie auth
   headers: {
     'Content-Type': 'application/json'
   }
 });
+
+// Add a request interceptor to include auth token in headers
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Type definitions for API responses
 export interface User {
@@ -20,6 +34,7 @@ export interface User {
   email: string;
   createdAt: string;
   lastLogin?: string;
+  token?: string; // Add token field
 }
 
 export interface Collection {
@@ -86,6 +101,12 @@ export const authApi = {
       password,
       rememberMe
     });
+    
+    // Store token if received
+    if (response.data.token) {
+      localStorage.setItem('auth_token', response.data.token);
+    }
+    
     return response.data;
   },
   
@@ -95,19 +116,36 @@ export const authApi = {
       email,
       password
     });
+    
+    // Store token if received
+    if (response.data.token) {
+      localStorage.setItem('auth_token', response.data.token);
+    }
+    
     return response.data;
   },
   
   logout: async () => {
-    const response = await apiClient.post('/users/logout');
-    return response.data;
+    try {
+      await apiClient.post('/users/logout');
+    } finally {
+      // Always remove token on logout regardless of API response
+      localStorage.removeItem('auth_token');
+    }
   },
   
   getCurrentUser: async () => {
     try {
+      // Check if we have a token
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        return null;
+      }
+      
       const response = await apiClient.get<User>('/users/me');
       return response.data;
     } catch (error) {
+      localStorage.removeItem('auth_token'); // Clear invalid token
       return null;
     }
   }
