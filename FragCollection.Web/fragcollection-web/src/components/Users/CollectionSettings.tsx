@@ -10,70 +10,77 @@ import {
   CircularProgress,
   Alert
 } from '@mui/material';
-import { useAuth } from '../../contexts/AuthContext';
 import { userApi } from '../../services/apiService';
+import { useAuth } from '../../contexts/AuthContext';
 
 const CollectionSettings: React.FC = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadUserData = async () => {
+    // Load user's collection info
+    const loadUserInfo = async () => {
       if (!user) {
         navigate('/login');
         return;
       }
 
       try {
-        setLoading(true);
-        // We need to fetch the user profile to get collection details
-        const userData = await userApi.getUserProfile(user.username);
-        setName(userData.collectionName);
-        setDescription(userData.collectionDescription || '');
+        setInitialLoading(true);
+        // If user has collectionName/collectionDescription in their profile, use it
+        if (user.collectionName) {
+          setName(user.collectionName);
+        }
+        
+        if (user.collectionDescription) {
+          setDescription(user.collectionDescription || '');
+        }
+        
+        // Otherwise fetch from API if needed
+        // Note: In this version the user profile should already have this info
       } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to load user data');
+        setError(err.response?.data?.message || 'Failed to load your collection information');
       } finally {
-        setLoading(false);
+        setInitialLoading(false);
       }
     };
 
-    loadUserData();
+    loadUserInfo();
   }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!user) {
-      navigate('/login');
+    
+    if (!name.trim()) {
+      setError('Collection name is required');
       return;
     }
 
     try {
-      setSaving(true);
+      setLoading(true);
       setError(null);
-      setSuccess(false);
-
-      await userApi.updateCollectionInfo(name, description);
-      setSuccess(true);
+      setSuccess(null);
       
-      // Automatically navigate back after success
-      setTimeout(() => {
-        navigate(`/users/${user.username}`);
-      }, 1500);
+      await userApi.updateCollectionInfo(name, description);
+      
+      setSuccess('Collection information updated successfully');
+      
+      // Update local user state if needed
+      // This would typically be handled through a context update
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update collection');
+      setError(err.response?.data?.message || 'Failed to update collection information');
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
   };
 
-  if (loading) {
+  if (initialLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
         <CircularProgress />
@@ -85,23 +92,23 @@ const CollectionSettings: React.FC = () => {
     <Container maxWidth="md">
       <Box sx={{ py: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Edit Collection Settings
+          Collection Settings
         </Typography>
-
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
-
-        {success && (
-          <Alert severity="success" sx={{ mb: 3 }}>
-            Collection updated successfully!
-          </Alert>
-        )}
-
-        <Paper elevation={3} sx={{ p: 3 }}>
-          <Box component="form" onSubmit={handleSubmit}>
+        
+        <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
+          {error && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {error}
+            </Alert>
+          )}
+          
+          {success && (
+            <Alert severity="success" sx={{ mb: 3 }}>
+              {success}
+            </Alert>
+          )}
+          
+          <Box component="form" onSubmit={handleSubmit} noValidate>
             <TextField
               margin="normal"
               required
@@ -111,39 +118,40 @@ const CollectionSettings: React.FC = () => {
               name="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              disabled={saving}
+              disabled={loading}
+              helperText="This is the name displayed for your perfume collection"
             />
-
+            
             <TextField
               margin="normal"
               fullWidth
               id="description"
-              label="Description"
+              label="Collection Description"
               name="description"
               multiline
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              disabled={saving}
-              placeholder="Describe your perfume collection..."
-              helperText="This description will be visible to anyone viewing your public entries."
+              disabled={loading}
+              helperText="Add a description about your collection, your interests, etc."
             />
-
+            
             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
               <Button
                 variant="outlined"
-                onClick={() => navigate(-1)}
-                disabled={saving}
+                onClick={() => navigate(`/users/${user?.username}`)}
+                disabled={loading}
               >
                 Cancel
               </Button>
+              
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={saving}
+                disabled={loading}
               >
-                {saving ? <CircularProgress size={24} /> : 'Save Changes'}
+                {loading ? <CircularProgress size={24} /> : 'Save Changes'}
               </Button>
             </Box>
           </Box>
