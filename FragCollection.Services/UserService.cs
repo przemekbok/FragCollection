@@ -20,6 +20,11 @@ namespace FragCollection.Services
             return await _userRepository.GetByIdAsync(id);
         }
 
+        public async Task<User?> GetUserByUsernameAsync(string username)
+        {
+            return await _userRepository.GetByUsernameAsync(username);
+        }
+
         public async Task<User?> AuthenticateAsync(string usernameOrEmail, string password)
         {
             User? user = await _userRepository.GetByUsernameAsync(usernameOrEmail);
@@ -65,7 +70,9 @@ namespace FragCollection.Services
                 Username = username,
                 Email = email,
                 PasswordHash = passwordHash,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                CollectionName = $"{username}'s Collection",
+                CollectionDescription = "My personal fragrance collection"
             };
 
             return await _userRepository.AddAsync(user);
@@ -74,6 +81,25 @@ namespace FragCollection.Services
         public async Task UpdateUserAsync(User user)
         {
             await _userRepository.UpdateAsync(user);
+        }
+
+        public async Task UpdateUserCollectionInfoAsync(Guid userId, string name, string description)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            user.CollectionName = name;
+            user.CollectionDescription = description;
+            
+            await _userRepository.UpdateAsync(user);
+        }
+
+        public async Task<IEnumerable<User>> GetUsersWithPublicEntriesAsync(int page = 1, int pageSize = 10)
+        {
+            return await _userRepository.GetUsersWithPublicEntriesAsync(page, pageSize);
         }
 
         private string CreatePasswordHash(string password)
