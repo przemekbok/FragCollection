@@ -18,7 +18,8 @@ import {
   InputAdornment,
   Grid,
   Paper,
-  Chip
+  Chip,
+  SelectChangeEvent
 } from '@mui/material';
 import { EntryType, PerfumeEntry, Collection, perfumeEntriesApi, collectionsApi, PerfumeInfo, NoteType } from '../../services/apiService';
 import { useAuth } from '../../contexts/AuthContext';
@@ -92,6 +93,14 @@ const PerfumeEntryForm: React.FC = () => {
       setEntry(prev => ({ ...prev, [name]: value }));
     }
   };
+  
+  // Special handler for Material UI Select components
+  const handleSelectChange = (e: SelectChangeEvent<any>) => {
+    const { name, value } = e.target;
+    if (name) {
+      setEntry(prev => ({ ...prev, [name]: value }));
+    }
+  };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
@@ -156,7 +165,7 @@ const PerfumeEntryForm: React.FC = () => {
                     id="collectionId"
                     name="collectionId"
                     value={entry.collectionId}
-                    onChange={handleChange}
+                    onChange={handleSelectChange}
                     label="Collection"
                     disabled={loading || collections.length === 0}
                   >
@@ -202,7 +211,7 @@ const PerfumeEntryForm: React.FC = () => {
                     id="type"
                     name="type"
                     value={entry.type}
-                    onChange={handleChange}
+                    onChange={handleSelectChange}
                     label="Type"
                     disabled={loading}
                   >
