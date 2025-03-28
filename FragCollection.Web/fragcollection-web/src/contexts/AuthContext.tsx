@@ -21,9 +21,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // Check if we have a token in localStorage
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+        
+        // If we have a token, validate it by fetching the current user
         const userData = await authApi.getCurrentUser();
         setUser(userData);
       } catch (error) {
+        // On error, clear token and user
+        localStorage.removeItem('auth_token');
         setUser(null);
       } finally {
         setLoading(false);
@@ -65,10 +76,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       setLoading(true);
       await authApi.logout();
-      setUser(null);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Logout failed.');
     } finally {
+      // Always clear user state on logout
+      setUser(null);
       setLoading(false);
     }
   };
