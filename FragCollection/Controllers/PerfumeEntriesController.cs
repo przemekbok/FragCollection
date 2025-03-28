@@ -3,6 +3,7 @@ using FragCollection.Core.Models;
 using FragCollection.IServices;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using FragCollection.DTOs.Perfume;
 
 namespace FragCollection.Controllers
 {
@@ -158,117 +159,6 @@ namespace FragCollection.Controllers
 
             await _perfumeEntryService.DeleteEntryAsync(id);
             return NoContent();
-        }
-    }
-
-    public class PerfumeEntryRequest
-    {
-        public string Name { get; set; } = string.Empty;
-        public string? Brand { get; set; }
-        public EntryType Type { get; set; }
-        public decimal Volume { get; set; }
-        public decimal PricePerMl { get; set; }
-        public bool IsPublic { get; set; }
-        public string? FragranticaUrl { get; set; }
-    }
-
-    public class UpdateVolumeRequest
-    {
-        public decimal Volume { get; set; }
-    }
-
-    public class PerfumeEntryResponse
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string? Brand { get; set; }
-        public EntryType Type { get; set; }
-        public decimal Volume { get; set; }
-        public decimal PricePerMl { get; set; }
-        public decimal TotalPrice => Volume * PricePerMl;
-        public bool IsPublic { get; set; }
-        public string? FragranticaUrl { get; set; }
-        public DateTime AddedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public Guid UserId { get; set; }
-        public PerfumeInfoResponse? PerfumeInfo { get; set; }
-
-        public PerfumeEntryResponse(PerfumeEntry entry)
-        {
-            Id = entry.Id;
-            Name = entry.Name;
-            Brand = entry.Brand;
-            Type = entry.Type;
-            Volume = entry.Volume;
-            PricePerMl = entry.PricePerMl;
-            IsPublic = entry.IsPublic;
-            FragranticaUrl = entry.FragranticaUrl;
-            AddedAt = entry.AddedAt;
-            UpdatedAt = entry.UpdatedAt;
-            UserId = entry.UserId;
-            
-            if (entry.PerfumeInfo != null)
-            {
-                PerfumeInfo = new PerfumeInfoResponse(entry.PerfumeInfo);
-            }
-        }
-    }
-
-    public class PerfumeInfoResponse
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Brand { get; set; } = string.Empty;
-        public string? Description { get; set; }
-        public string? ImageUrl { get; set; }
-        public string FragranticaUrl { get; set; } = string.Empty;
-        public List<PerfumeNoteResponse> TopNotes { get; set; } = new List<PerfumeNoteResponse>();
-        public List<PerfumeNoteResponse> MiddleNotes { get; set; } = new List<PerfumeNoteResponse>();
-        public List<PerfumeNoteResponse> BaseNotes { get; set; } = new List<PerfumeNoteResponse>();
-
-        public PerfumeInfoResponse(PerfumeInfo info)
-        {
-            Id = info.Id;
-            Name = info.Name;
-            Brand = info.Brand;
-            Description = info.Description;
-            ImageUrl = info.ImageUrl;
-            FragranticaUrl = info.FragranticaUrl;
-            
-            if (info.Notes != null)
-            {
-                foreach (var note in info.Notes)
-                {
-                    var noteResponse = new PerfumeNoteResponse(note);
-                    
-                    switch (note.Type)
-                    {
-                        case NoteType.Top:
-                            TopNotes.Add(noteResponse);
-                            break;
-                        case NoteType.Middle:
-                            MiddleNotes.Add(noteResponse);
-                            break;
-                        case NoteType.Base:
-                            BaseNotes.Add(noteResponse);
-                            break;
-                    }
-                }
-            }
-        }
-    }
-
-    public class PerfumeNoteResponse
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public NoteType Type { get; set; }
-
-        public PerfumeNoteResponse(PerfumeNote note)
-        {
-            Id = note.Id;
-            Name = note.Name;
-            Type = note.Type;
         }
     }
 }
