@@ -22,7 +22,8 @@ import {
   Chip,
   TextField,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  SelectChangeEvent
 } from '@mui/material';
 import { 
   Delete as DeleteIcon, 
