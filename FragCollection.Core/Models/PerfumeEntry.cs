@@ -19,12 +19,12 @@ namespace FragCollection.Core.Models
         public DateTime AddedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         
-        // Foreign keys
-        public Guid CollectionId { get; set; }
+        // Foreign keys - replaced CollectionId with UserId
+        public Guid UserId { get; set; }
         public Guid? PerfumeInfoId { get; set; }
         
-        // Navigation properties
-        public virtual Collection Collection { get; set; } = null!;
+        // Navigation properties - replaced Collection with User
+        public virtual User User { get; set; } = null!;
         public virtual PerfumeInfo? PerfumeInfo { get; set; }
     }
 }
