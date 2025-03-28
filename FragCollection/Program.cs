@@ -1,4 +1,4 @@
-using FragCollection.Infrastructure.Data;
+using FragCollection.DAL.Data;
 using FragCollection.DAL.Repositories;
 using FragCollection.IDAL.IRepositories;
 using FragCollection.IServices;

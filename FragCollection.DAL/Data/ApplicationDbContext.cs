@@ -1,7 +1,7 @@
 using FragCollection.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FragCollection.Infrastructure.Data
+namespace FragCollection.DAL.Data
 {
     public class ApplicationDbContext : DbContext
     {

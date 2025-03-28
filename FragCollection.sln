@@ -10,8 +10,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FragCollection.IDAL", "Frag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FragCollection.DAL", "FragCollection.DAL\FragCollection.DAL.csproj", "{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FragCollection.Infrastructure", "FragCollection.Infrastructure\FragCollection.Infrastructure.csproj", "{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FragCollection.IServices", "FragCollection.IServices\FragCollection.IServices.csproj", "{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FragCollection.Services", "FragCollection.Services\FragCollection.Services.csproj", "{C4F1E25D-3D67-4A8B-8E38-6B8D5A791C26}"
@@ -34,6 +32,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "fragcollection-web", "FragC
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "51924"
+		SlnRelativePath = "FragCollection.Web\fragcollection-web\"
 	EndProjectSection
 EndProject
 Global
@@ -58,10 +57,6 @@ Global
 		{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
