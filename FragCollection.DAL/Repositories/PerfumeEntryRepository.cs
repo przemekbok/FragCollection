@@ -11,10 +11,21 @@ namespace FragCollection.DAL.Repositories
         {
         }
 
-        public async Task<IEnumerable<PerfumeEntry>> GetByCollectionIdAsync(Guid collectionId)
+        public async Task<IEnumerable<PerfumeEntry>> GetByUserIdAsync(Guid userId)
         {
             return await _context.PerfumeEntries
-                .Where(p => p.CollectionId == collectionId)
+                .Where(p => p.UserId == userId)
+                .Include(p => p.PerfumeInfo)
+                .ThenInclude(pi => pi != null ? pi.Notes : null)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<PerfumeEntry>> GetPublicEntriesByUserIdAsync(Guid userId)
+        {
+            return await _context.PerfumeEntries
+                .Where(p => p.UserId == userId && p.IsPublic)
+                .Include(p => p.PerfumeInfo)
+                .ThenInclude(pi => pi != null ? pi.Notes : null)
                 .ToListAsync();
         }
 
@@ -23,9 +34,19 @@ namespace FragCollection.DAL.Repositories
             return await _context.PerfumeEntries
                 .Where(p => p.IsPublic)
                 .OrderByDescending(p => p.UpdatedAt)
+                .Include(p => p.PerfumeInfo)
+                .ThenInclude(pi => pi != null ? pi.Notes : null)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+        }
+
+        public override async Task<PerfumeEntry?> GetByIdAsync(Guid id)
+        {
+            return await _context.PerfumeEntries
+                .Include(p => p.PerfumeInfo)
+                .ThenInclude(pi => pi != null ? pi.Notes : null)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task UpdateVolumeAsync(Guid id, decimal newVolume)
