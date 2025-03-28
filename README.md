@@ -26,8 +26,10 @@ A web application to manage your perfume collection, focused on decants and bott
 
 - **FragCollection**: Main API project with controllers
 - **FragCollection.Core**: Domain models
-- **FragCollection.Interfaces**: Service and repository interfaces
-- **FragCollection.Infrastructure**: Data access layer with EF Core
+- **FragCollection.IDAL**: Data access interfaces
+- **FragCollection.DAL**: Data access implementations
+- **FragCollection.Infrastructure**: Database context and infrastructure configuration
+- **FragCollection.IServices**: Service interfaces
 - **FragCollection.Services**: Business logic implementation
 - **FragCollection.Web**: React client (separate repository)
 
@@ -65,4 +67,4 @@ dotnet ef database update --project FragCollection.Infrastructure --startup-proj
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License.

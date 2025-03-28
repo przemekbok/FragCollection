@@ -6,9 +6,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FragCollection", "FragColle
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FragCollection.Core", "FragCollection.Core\FragCollection.Core.csproj", "{C3B851FA-9EA9-4CF0-A42C-C456B5C6E25A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FragCollection.Interfaces", "FragCollection.Interfaces\FragCollection.Interfaces.csproj", "{F2F9A755-E695-4DE5-9EC5-82E4B75A823A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FragCollection.IDAL", "FragCollection.IDAL\FragCollection.IDAL.csproj", "{F2F9A755-E695-4DE5-9EC5-82E4B75A823A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FragCollection.Infrastructure", "FragCollection.Infrastructure\FragCollection.Infrastructure.csproj", "{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FragCollection.DAL", "FragCollection.DAL\FragCollection.DAL.csproj", "{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FragCollection.Infrastructure", "FragCollection.Infrastructure\FragCollection.Infrastructure.csproj", "{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FragCollection.IServices", "FragCollection.IServices\FragCollection.IServices.csproj", "{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FragCollection.Services", "FragCollection.Services\FragCollection.Services.csproj", "{C4F1E25D-3D67-4A8B-8E38-6B8D5A791C26}"
 EndProject
@@ -34,6 +38,14 @@ Global
 		{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C4F1E25D-3D67-4A8B-8E38-6B8D5A791C26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C4F1E25D-3D67-4A8B-8E38-6B8D5A791C26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4F1E25D-3D67-4A8B-8E38-6B8D5A791C26}.Release|Any CPU.ActiveCfg = Release|Any CPU
