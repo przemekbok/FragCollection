@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Configuration;
 
 namespace FragCollection.Controllers
 {
@@ -13,10 +14,12 @@ namespace FragCollection.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IConfiguration _configuration;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IConfiguration configuration)
         {
             _userService = userService;
+            _configuration = configuration;
         }
 
         [HttpPost("register")]
@@ -25,7 +28,16 @@ namespace FragCollection.Controllers
             try
             {
                 var user = await _userService.RegisterAsync(request.Username, request.Email, request.Password);
-                return Ok(new UserResponse(user));
+                
+                // Generate token
+                var jwtSecret = _configuration["JwtSettings:Secret"];
+                if (string.IsNullOrEmpty(jwtSecret))
+                {
+                    jwtSecret = "your_default_secret_key_at_least_32_chars";
+                }
+                var token = JwtHelper.GenerateJwtToken(user, jwtSecret);
+                
+                return Ok(new UserResponse(user, token));
             }
             catch (Exception ex)
             {
@@ -43,7 +55,7 @@ namespace FragCollection.Controllers
                 return Unauthorized(new { message = "Invalid username/email or password" });
             }
 
-            // Create claims for the user
+            // Create claims for the user (used by cookie auth)
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -62,7 +74,15 @@ namespace FragCollection.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
-            return Ok(new UserResponse(user));
+            // Generate JWT token as well
+            var jwtSecret = _configuration["JwtSettings:Secret"];
+            if (string.IsNullOrEmpty(jwtSecret))
+            {
+                jwtSecret = "your_default_secret_key_at_least_32_chars";
+            }
+            var token = JwtHelper.GenerateJwtToken(user, jwtSecret);
+
+            return Ok(new UserResponse(user, token));
         }
 
         [HttpPost("logout")]
@@ -117,17 +137,19 @@ namespace FragCollection.Controllers
         public string Email { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime? LastLogin { get; set; }
+        public string? Token { get; set; }  // New token property
 
         [JsonIgnore] // Don't include collections in the response
         public ICollection<Collection> Collections { get; set; } = new List<Collection>();
 
-        public UserResponse(User user)
+        public UserResponse(User user, string? token = null)
         {
             Id = user.Id;
             Username = user.Username;
             Email = user.Email;
             CreatedAt = user.CreatedAt;
             LastLogin = user.LastLogin;
+            Token = token;
         }
     }
 }
