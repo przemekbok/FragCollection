@@ -7,9 +7,16 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Navigation from './components/Navigation';
 import HomePage from './components/HomePage';
 import Login, { Register } from './components/Login';
-import { CollectionsList, CollectionForm, CollectionDetail } from './components/Collections/CollectionsList';
-import PerfumeEntryForm, { PerfumeEntryDetail } from './components/PerfumeEntries/PerfumeEntryForm';
 import NotFound from './components/NotFound';
+
+// User Profile Components
+import UserProfile from './components/Users/UserProfile';
+import UsersList from './components/Users/UsersList';
+import CollectionSettings from './components/Users/CollectionSettings';
+
+// Perfume Entry Components
+import PerfumeEntryForm from './components/PerfumeEntries/PerfumeEntryForm';
+import PerfumeEntryDetail from './components/PerfumeEntries/PerfumeEntryDetail';
 
 // Create a theme
 const theme = createTheme({
@@ -53,6 +60,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 };
 
 const App: React.FC = () => {
+  const { user } = useAuth();
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -64,37 +73,21 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             
-            {/* Collection Routes */}
+            {/* User Profile Routes */}
+            <Route path="/users" element={<UsersList />} />
+            <Route path="/users/:username" element={<UserProfile />} />
             <Route 
-              path="/collections" 
+              path="/profile/edit" 
               element={
                 <ProtectedRoute>
-                  <CollectionsList />
-                </ProtectedRoute>
-              } 
-            />
-            <Route path="/collections/public" element={<CollectionsList publicOnly />} />
-            <Route 
-              path="/collections/new" 
-              element={
-                <ProtectedRoute>
-                  <CollectionForm />
-                </ProtectedRoute>
-              } 
-            />
-            <Route path="/collections/:id" element={<CollectionDetail />} />
-            <Route 
-              path="/collections/:id/edit" 
-              element={
-                <ProtectedRoute>
-                  <CollectionForm />
+                  <CollectionSettings />
                 </ProtectedRoute>
               } 
             />
             
             {/* Perfume Entry Routes */}
             <Route 
-              path="/collections/:collectionId/entries/new" 
+              path="/entries/new" 
               element={
                 <ProtectedRoute>
                   <PerfumeEntryForm />
@@ -110,6 +103,14 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               } 
             />
+            
+            {/* Redirect old routes to new structure */}
+            <Route path="/collections" element={<Navigate to={user ? `/users/${user.username}` : "/users"} replace />} />
+            <Route path="/collections/public" element={<Navigate to="/users" replace />} />
+            <Route path="/collections/new" element={<Navigate to="/profile/edit" replace />} />
+            <Route path="/collections/:id" element={<Navigate to="/users" replace />} />
+            <Route path="/collections/:id/edit" element={<Navigate to="/profile/edit" replace />} />
+            <Route path="/collections/:id/entries/new" element={<Navigate to="/entries/new" replace />} />
             
             {/* Catch-all route for 404 */}
             <Route path="*" element={<NotFound />} />
