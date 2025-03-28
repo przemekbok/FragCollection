@@ -17,11 +17,13 @@ import {
   Alert,
   InputAdornment,
   Grid,
-  Paper,
-  Chip,
-  SelectChangeEvent
+  Paper
 } from '@mui/material';
-import { EntryType, PerfumeEntry, perfumeEntriesApi } from '../../services/apiService';
+import { 
+  EntryType, 
+  PerfumeEntry, 
+  perfumeEntriesApi 
+} from '../../services/apiService';
 import { useAuth } from '../../contexts/AuthContext';
 
 const PerfumeEntryForm: React.FC = () => {
@@ -46,12 +48,18 @@ const PerfumeEntryForm: React.FC = () => {
   const [fragranticaLoading, setFragranticaLoading] = useState(false);
   const [computedTotalPrice, setComputedTotalPrice] = useState(0);
 
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         // If editing an entry, fetch its data
         if (isEditing && id) {
-          setLoading(true);
           const entryData = await perfumeEntriesApi.getEntry(id);
           setEntry({
             name: entryData.name,
@@ -67,7 +75,6 @@ const PerfumeEntryForm: React.FC = () => {
         setError(err.response?.data?.message || 'Failed to load data');
       } finally {
         setFetchingData(false);
-        setLoading(false);
       }
     };
 
@@ -91,7 +98,7 @@ const PerfumeEntryForm: React.FC = () => {
   };
   
   // Special handler for Material UI Select components
-  const handleSelectChange = (e: SelectChangeEvent<any>) => {
+  const handleSelectChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
     const { name, value } = e.target;
     if (name) {
       setEntry(prev => ({ ...prev, [name]: value }));
@@ -106,11 +113,6 @@ const PerfumeEntryForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-    
     try {
       setLoading(true);
       setError(null);
@@ -121,7 +123,7 @@ const PerfumeEntryForm: React.FC = () => {
         await perfumeEntriesApi.createEntry(entry as any);
       }
       
-      navigate(`/users/${user.username}`);
+      navigate(`/users/${user?.username}`);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to save entry');
     } finally {
@@ -186,7 +188,7 @@ const PerfumeEntryForm: React.FC = () => {
                     id="type"
                     name="type"
                     value={entry.type}
-                    onChange={handleSelectChange}
+                    onChange={handleSelectChange as any}
                     label="Type"
                     disabled={loading}
                   >
@@ -263,7 +265,7 @@ const PerfumeEntryForm: React.FC = () => {
                       disabled={loading}
                     />
                   }
-                  label="Make this entry public"
+                  label="Make this entry public (visible to others)"
                 />
               </Grid>
 
