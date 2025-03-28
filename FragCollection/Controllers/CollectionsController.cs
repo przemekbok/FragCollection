@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using FragCollection.Core.Models;
-using FragCollection.Interfaces.IServices;
+using FragCollection.IServices;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 

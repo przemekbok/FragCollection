@@ -1,7 +1,7 @@
 using FragCollection.Infrastructure.Data;
-using FragCollection.Infrastructure.Repositories;
-using FragCollection.Interfaces.IRepositories;
-using FragCollection.Interfaces.IServices;
+using FragCollection.DAL.Repositories;
+using FragCollection.IDAL.IRepositories;
+using FragCollection.IServices;
 using FragCollection.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
