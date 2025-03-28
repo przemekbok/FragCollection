@@ -1,6 +1,6 @@
 using FragCollection.Core.Models;
-using FragCollection.Interfaces.IRepositories;
-using FragCollection.Interfaces.IServices;
+using FragCollection.IDAL.IRepositories;
+using FragCollection.IServices;
 
 namespace FragCollection.Services
 {

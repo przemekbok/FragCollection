@@ -1,7 +1,7 @@
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using FragCollection.Core.Models;
-using FragCollection.Interfaces.IServices;
+using FragCollection.IServices;
 using HtmlAgilityPack;
 
 namespace FragCollection.Services

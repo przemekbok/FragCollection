@@ -8,7 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="../FragCollection.Core/FragCollection.Core.csproj" />
-    <ProjectReference Include="../FragCollection.Interfaces/FragCollection.Interfaces.csproj" />
+    <ProjectReference Include="../FragCollection.IDAL/FragCollection.IDAL.csproj" />
+    <ProjectReference Include="../FragCollection.IServices/FragCollection.IServices.csproj" />
   </ItemGroup>
 
   <ItemGroup>
