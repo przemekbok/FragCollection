@@ -7,16 +7,9 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Navigation from './components/Navigation';
 import HomePage from './components/HomePage';
 import Login, { Register } from './components/Login';
+import { UserProfilesList, UserProfile, CollectionSettings } from './components/Users';
+import PerfumeEntryForm, { PerfumeEntryDetail } from './components/PerfumeEntries/PerfumeEntryForm';
 import NotFound from './components/NotFound';
-
-// User Profile Components
-import UserProfile from './components/Users/UserProfile';
-import UsersList from './components/Users/UsersList';
-import CollectionSettings from './components/Users/CollectionSettings';
-
-// Perfume Entry Components
-import PerfumeEntryForm from './components/PerfumeEntries/PerfumeEntryForm';
-import PerfumeEntryDetail from './components/PerfumeEntries/PerfumeEntryDetail';
 
 // Create a theme
 const theme = createTheme({
@@ -60,8 +53,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 };
 
 const App: React.FC = () => {
-  const { user } = useAuth();
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -74,10 +65,10 @@ const App: React.FC = () => {
             <Route path="/register" element={<Register />} />
             
             {/* User Profile Routes */}
-            <Route path="/users" element={<UsersList />} />
+            <Route path="/users" element={<UserProfilesList />} />
             <Route path="/users/:username" element={<UserProfile />} />
             <Route 
-              path="/profile/edit" 
+              path="/collection/settings" 
               element={
                 <ProtectedRoute>
                   <CollectionSettings />
@@ -85,7 +76,7 @@ const App: React.FC = () => {
               } 
             />
             
-            {/* Perfume Entry Routes */}
+            {/* Entries Routes */}
             <Route 
               path="/entries/new" 
               element={
@@ -104,13 +95,10 @@ const App: React.FC = () => {
               } 
             />
             
-            {/* Redirect old routes to new structure */}
-            <Route path="/collections" element={<Navigate to={user ? `/users/${user.username}` : "/users"} replace />} />
+            {/* Legacy Routes - redirect to new ones */}
+            <Route path="/collections" element={<Navigate to="/users" replace />} />
             <Route path="/collections/public" element={<Navigate to="/users" replace />} />
-            <Route path="/collections/new" element={<Navigate to="/profile/edit" replace />} />
             <Route path="/collections/:id" element={<Navigate to="/users" replace />} />
-            <Route path="/collections/:id/edit" element={<Navigate to="/profile/edit" replace />} />
-            <Route path="/collections/:id/entries/new" element={<Navigate to="/entries/new" replace />} />
             
             {/* Catch-all route for 404 */}
             <Route path="*" element={<NotFound />} />
