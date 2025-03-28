@@ -1,10 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Typography, Box, Button, Paper, Grid } from '@mui/material';
+import { 
+  Container, 
+  Typography, 
+  Box, 
+  Button, 
+  Paper, 
+  Grid, 
+  Card, 
+  CardContent, 
+  CardActions,
+  CircularProgress
+} from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
+
+// Simple API to get users with public entries
+const getUsersWithPublicEntries = async () => {
+  const response = await fetch('/api/users/public');
+  if (!response.ok) {
+    throw new Error('Failed to load users');
+  }
+  return await response.json();
+};
 
 const HomePage: React.FC = () => {
   const { user } = useAuth();
+  const [publicUsers, setPublicUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPublicUsers = async () => {
+      try {
+        setLoading(true);
+        const users = await getUsersWithPublicEntries();
+        setPublicUsers(users);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPublicUsers();
+  }, []);
 
   return (
     <Container maxWidth="lg">
@@ -36,9 +75,9 @@ const HomePage: React.FC = () => {
               color="primary"
               size="large"
               component={Link}
-              to="/collections"
+              to={`/users/${user.username}`}
             >
-              View My Collections
+              My Collection
             </Button>
           ) : (
             <Grid container spacing={2} justifyContent="center">
@@ -73,18 +112,18 @@ const HomePage: React.FC = () => {
         <Grid item xs={12} md={4}>
           <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
             <Typography variant="h5" component="h2" gutterBottom>
-              Manage Collections
+              Manage Your Perfumes
             </Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
-              Create multiple collections to organize your perfumes by season, occasion, or any category you like.
+              Create a personal collection of your perfumes. Track bottles and decants with volume and price information.
             </Typography>
             <Box sx={{ mt: 'auto' }}>
               <Button 
                 component={Link} 
-                to={user ? "/collections" : "/login"} 
+                to={user ? `/users/${user.username}` : "/login"} 
                 variant="outlined"
               >
-                {user ? "My Collections" : "Login to Start"}
+                {user ? "My Collection" : "Login to Start"}
               </Button>
             </Box>
           </Paper>
@@ -92,7 +131,7 @@ const HomePage: React.FC = () => {
         <Grid item xs={12} md={4}>
           <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
             <Typography variant="h5" component="h2" gutterBottom>
-              Track Bottles & Decants
+              Track Usage
             </Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
               Keep track of your perfume inventory, including volume, price, and usage over time.
@@ -100,10 +139,10 @@ const HomePage: React.FC = () => {
             <Box sx={{ mt: 'auto' }}>
               <Button 
                 component={Link} 
-                to="/collections/public" 
+                to="/explorer"
                 variant="outlined"
               >
-                Browse Public Collections
+                Explore Collections
               </Button>
             </Box>
           </Paper>
@@ -119,15 +158,68 @@ const HomePage: React.FC = () => {
             <Box sx={{ mt: 'auto' }}>
               <Button 
                 component={Link} 
-                to={user ? "/collections/new" : "/register"} 
+                to={user ? "/entries/new" : "/register"} 
                 variant="outlined"
               >
-                {user ? "Create Collection" : "Register Now"}
+                {user ? "Add Perfume" : "Register Now"}
               </Button>
             </Box>
           </Paper>
         </Grid>
       </Grid>
+
+      <Box sx={{ mb: 8 }}>
+        <Typography variant="h4" component="h2" gutterBottom align="center" sx={{ mb: 4 }}>
+          Explore User Collections
+        </Typography>
+        
+        {loading ? (
+          <Box display="flex" justifyContent="center">
+            <CircularProgress />
+          </Box>
+        ) : error ? (
+          <Typography color="error" align="center">
+            {error}
+          </Typography>
+        ) : publicUsers.length === 0 ? (
+          <Typography align="center" color="textSecondary">
+            No public collections available yet.
+          </Typography>
+        ) : (
+          <Grid container spacing={3}>
+            {publicUsers.map(user => (
+              <Grid item xs={12} sm={6} md={4} key={user.id}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h5" component="h3">
+                      {user.collectionName}
+                    </Typography>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      by {user.username}
+                    </Typography>
+                    {user.collectionDescription && (
+                      <Typography variant="body2" sx={{ mt: 2 }}>
+                        {user.collectionDescription.length > 100 
+                          ? `${user.collectionDescription.substring(0, 100)}...` 
+                          : user.collectionDescription}
+                      </Typography>
+                    )}
+                  </CardContent>
+                  <CardActions>
+                    <Button 
+                      size="small" 
+                      component={Link} 
+                      to={`/users/${user.username}`}
+                    >
+                      View Collection
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </Box>
     </Container>
   );
 };
