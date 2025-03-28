@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../FragCollection.Core/FragCollection.Core.csproj" />
+    <ProjectReference Include="../FragCollection.IDAL/FragCollection.IDAL.csproj" />
+    <ProjectReference Include="../FragCollection.Infrastructure/FragCollection.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

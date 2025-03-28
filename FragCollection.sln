@@ -1,0 +1,84 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FragCollection", "FragCollection\FragCollection.csproj", "{CD0B51BF-1553-4A4A-8EE4-80CCE7663CA8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FragCollection.Core", "FragCollection.Core\FragCollection.Core.csproj", "{C3B851FA-9EA9-4CF0-A42C-C456B5C6E25A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FragCollection.IDAL", "FragCollection.IDAL\FragCollection.IDAL.csproj", "{F2F9A755-E695-4DE5-9EC5-82E4B75A823A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FragCollection.DAL", "FragCollection.DAL\FragCollection.DAL.csproj", "{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FragCollection.Infrastructure", "FragCollection.Infrastructure\FragCollection.Infrastructure.csproj", "{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FragCollection.IServices", "FragCollection.IServices\FragCollection.IServices.csproj", "{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FragCollection.Services", "FragCollection.Services\FragCollection.Services.csproj", "{C4F1E25D-3D67-4A8B-8E38-6B8D5A791C26}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "fragcollection-web", "FragCollection.Web\fragcollection-web\", "{1854F9AA-F6DE-4D70-AE4D-CB02CD36D36F}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_51924"
+		Debug.AspNetCompiler.PhysicalPath = "FragCollection.Web\fragcollection-web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51924\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_51924"
+		Release.AspNetCompiler.PhysicalPath = "FragCollection.Web\fragcollection-web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51924\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "51924"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD0B51BF-1553-4A4A-8EE4-80CCE7663CA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD0B51BF-1553-4A4A-8EE4-80CCE7663CA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD0B51BF-1553-4A4A-8EE4-80CCE7663CA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD0B51BF-1553-4A4A-8EE4-80CCE7663CA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3B851FA-9EA9-4CF0-A42C-C456B5C6E25A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3B851FA-9EA9-4CF0-A42C-C456B5C6E25A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3B851FA-9EA9-4CF0-A42C-C456B5C6E25A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3B851FA-9EA9-4CF0-A42C-C456B5C6E25A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2F9A755-E695-4DE5-9EC5-82E4B75A823A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2F9A755-E695-4DE5-9EC5-82E4B75A823A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2F9A755-E695-4DE5-9EC5-82E4B75A823A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2F9A755-E695-4DE5-9EC5-82E4B75A823A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F79E6C9-5B72-4D57-A56A-B71B3ECDAE7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67F9D1C5-025A-45BA-9F66-AB41E1B4E0B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A487631D-F55C-4E2F-BAE2-3BDDC58A8B9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4F1E25D-3D67-4A8B-8E38-6B8D5A791C26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4F1E25D-3D67-4A8B-8E38-6B8D5A791C26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4F1E25D-3D67-4A8B-8E38-6B8D5A791C26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4F1E25D-3D67-4A8B-8E38-6B8D5A791C26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1854F9AA-F6DE-4D70-AE4D-CB02CD36D36F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1854F9AA-F6DE-4D70-AE4D-CB02CD36D36F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1854F9AA-F6DE-4D70-AE4D-CB02CD36D36F}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{1854F9AA-F6DE-4D70-AE4D-CB02CD36D36F}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AB15A9AC-5E0F-480D-967B-8F4E6D4E5B2D}
+	EndGlobalSection
+EndGlobal
