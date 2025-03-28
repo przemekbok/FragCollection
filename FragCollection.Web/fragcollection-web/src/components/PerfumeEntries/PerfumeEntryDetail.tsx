@@ -1,21 +1,88 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   Container,
   Typography,
   Box,
+  Button,
   Paper,
   Grid,
-  Button,
   Chip,
   CircularProgress,
   TextField,
   InputAdornment,
   Alert
 } from '@mui/material';
-import { EntryType, PerfumeEntry, perfumeEntriesApi, userApi } from '../../services/apiService';
+import { EntryType, PerfumeEntry, perfumeEntriesApi } from '../../services/apiService';
 import { useAuth } from '../../contexts/AuthContext';
 
+// Volume update mini-form component
+interface VolumeUpdateFormProps {
+  currentVolume: number;
+  onUpdate: (newVolume: number) => Promise<void>;
+}
+
+const VolumeUpdateForm: React.FC<VolumeUpdateFormProps> = ({ currentVolume, onUpdate }) => {
+  const [volume, setVolume] = useState(currentVolume);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (volume === currentVolume) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      await onUpdate(volume);
+    } catch (err: any) {
+      setError(err.message || 'Failed to update volume');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Box component="form" onSubmit={handleSubmit}>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+      
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={8} sm={6}>
+          <TextField
+            required
+            fullWidth
+            id="update-volume"
+            label="New Volume"
+            type="number"
+            InputProps={{
+              endAdornment: <InputAdornment position="end">ml</InputAdornment>,
+            }}
+            value={volume}
+            onChange={(e) => setVolume(Number(e.target.value))}
+            disabled={loading}
+            size="small"
+          />
+        </Grid>
+        <Grid item xs={4} sm={6}>
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={loading || volume === currentVolume}
+            size="medium"
+          >
+            {loading ? <CircularProgress size={24} /> : 'Update'}
+          </Button>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
+
+// Main PerfumeEntryDetail component
 const PerfumeEntryDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [entry, setEntry] = useState<PerfumeEntry | null>(null);
@@ -23,7 +90,6 @@ const PerfumeEntryDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
-  const isOwner = user && entry && entry.userId === user.id;
 
   useEffect(() => {
     const fetchEntry = async () => {
@@ -63,20 +129,7 @@ const PerfumeEntryDetail: React.FC = () => {
     }
   };
 
-  const handleDeleteEntry = async () => {
-    try {
-      if (!entry || !id || !user) return;
-      
-      if (!window.confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
-        return;
-      }
-      
-      await perfumeEntriesApi.deleteEntry(id);
-      navigate(`/users/${user.username}`);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete entry');
-    }
-  };
+  const isOwner = user && entry && entry.userId === user.id;
 
   if (loading) {
     return (
@@ -120,20 +173,10 @@ const PerfumeEntryDetail: React.FC = () => {
                     {entry.brand || 'Unknown brand'}
                   </Typography>
                 </Box>
-                <Box>
-                  <Chip 
-                    label={entry.type === EntryType.Bottle ? 'Bottle' : 'Decant'}
-                    color={entry.type === EntryType.Bottle ? 'primary' : 'secondary'}
-                    sx={{ mb: 1 }}
-                  />
-                  {isOwner && (
-                    <Chip 
-                      label={entry.isPublic ? 'Public' : 'Private'}
-                      color={entry.isPublic ? 'success' : 'default'}
-                      sx={{ ml: 1 }}
-                    />
-                  )}
-                </Box>
+                <Chip 
+                  label={entry.type === EntryType.Bottle ? 'Bottle' : 'Decant'}
+                  color={entry.type === EntryType.Bottle ? 'primary' : 'secondary'}
+                />
               </Box>
 
               <Box sx={{ mt: 4 }}>
@@ -163,6 +206,14 @@ const PerfumeEntryDetail: React.FC = () => {
                       ${entry.totalPrice.toFixed(2)}
                     </Typography>
                   </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="body2" color="text.secondary">
+                      Visibility
+                    </Typography>
+                    <Typography variant="body1">
+                      {entry.isPublic ? 'Public' : 'Private'}
+                    </Typography>
+                  </Grid>
                 </Grid>
               </Box>
 
@@ -176,32 +227,22 @@ const PerfumeEntryDetail: React.FC = () => {
                 </Box>
               )}
 
-              <Box sx={{ mt: 4, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+              <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
                 <Button
                   variant="outlined"
-                  component={Link}
-                  to={`/users/${entry.userId}`}
+                  onClick={() => navigate(-1)}
                 >
-                  Back to Collection
+                  Back
                 </Button>
                 {isOwner && (
-                  <>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      component={Link}
-                      to={`/entries/${entry.id}/edit`}
-                    >
-                      Edit Entry
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={handleDeleteEntry}
-                    >
-                      Delete Entry
-                    </Button>
-                  </>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    component={Link}
+                    to={`/entries/${entry.id}/edit`}
+                  >
+                    Edit Entry
+                  </Button>
                 )}
               </Box>
             </Paper>
@@ -273,90 +314,22 @@ const PerfumeEntryDetail: React.FC = () => {
                   )}
                 </Box>
                 
-                {entry.fragranticaUrl && (
-                  <Box sx={{ mt: 3 }}>
-                    <Button 
-                      variant="outlined"
-                      href={entry.fragranticaUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View on Fragrantica
-                    </Button>
-                  </Box>
-                )}
+                <Box sx={{ mt: 3 }}>
+                  <Button 
+                    variant="outlined"
+                    href={entry.perfumeInfo.fragranticaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View on Fragrantica
+                  </Button>
+                </Box>
               </Paper>
             </Grid>
           )}
         </Grid>
       </Box>
     </Container>
-  );
-};
-
-// Volume update mini-form component
-interface VolumeUpdateFormProps {
-  currentVolume: number;
-  onUpdate: (newVolume: number) => Promise<void>;
-}
-
-const VolumeUpdateForm: React.FC<VolumeUpdateFormProps> = ({ currentVolume, onUpdate }) => {
-  const [volume, setVolume] = useState(currentVolume);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (volume === currentVolume) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      await onUpdate(volume);
-    } catch (err: any) {
-      setError(err.message || 'Failed to update volume');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <Box component="form" onSubmit={handleSubmit}>
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
-      
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={8} sm={6}>
-          <TextField
-            required
-            fullWidth
-            id="update-volume"
-            label="New Volume"
-            type="number"
-            InputProps={{
-              endAdornment: <InputAdornment position="end">ml</InputAdornment>,
-            }}
-            value={volume}
-            onChange={(e) => setVolume(Number(e.target.value))}
-            disabled={loading}
-            size="small"
-          />
-        </Grid>
-        <Grid item xs={4} sm={6}>
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={loading || volume === currentVolume}
-            size="medium"
-          >
-            {loading ? <CircularProgress size={24} /> : 'Update'}
-          </Button>
-        </Grid>
-      </Grid>
-    </Box>
   );
 };
 
