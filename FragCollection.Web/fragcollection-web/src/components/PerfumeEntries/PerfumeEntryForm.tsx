@@ -1,6 +1,5 @@
-// src/components/PerfumeEntries/PerfumeEntryForm.tsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link as RouterLink } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -17,20 +16,15 @@ import {
   Alert,
   InputAdornment,
   Grid,
-  Paper
+  Paper,
+  SelectChangeEvent
 } from '@mui/material';
-import { 
-  EntryType, 
-  PerfumeEntry, 
-  perfumeEntriesApi 
-} from '../../services/apiService';
-import { useAuth } from '../../contexts/AuthContext';
+import { EntryType, PerfumeEntry, perfumeEntriesApi } from '../../services/apiService';
 
 const PerfumeEntryForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const isEditing = !!id;
   const navigate = useNavigate();
-  const { user } = useAuth();
   
   const [entry, setEntry] = useState<Partial<PerfumeEntry>>({
     name: '',
@@ -39,7 +33,7 @@ const PerfumeEntryForm: React.FC = () => {
     volume: 100,
     pricePerMl: 0,
     isPublic: false,
-    fragranticaUrl: ''
+    fragranticaUrl: '',
   });
   
   const [loading, setLoading] = useState(false);
@@ -47,13 +41,6 @@ const PerfumeEntryForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [fragranticaLoading, setFragranticaLoading] = useState(false);
   const [computedTotalPrice, setComputedTotalPrice] = useState(0);
-
-  // Redirect if not logged in
-  useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    }
-  }, [user, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,7 +55,7 @@ const PerfumeEntryForm: React.FC = () => {
             volume: entryData.volume,
             pricePerMl: entryData.pricePerMl,
             isPublic: entryData.isPublic,
-            fragranticaUrl: entryData.fragranticaUrl || ''
+            fragranticaUrl: entryData.fragranticaUrl || '',
           });
         }
       } catch (err: any) {
@@ -98,7 +85,7 @@ const PerfumeEntryForm: React.FC = () => {
   };
   
   // Special handler for Material UI Select components
-  const handleSelectChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+  const handleSelectChange = (e: SelectChangeEvent<any>) => {
     const { name, value } = e.target;
     if (name) {
       setEntry(prev => ({ ...prev, [name]: value }));
@@ -123,7 +110,7 @@ const PerfumeEntryForm: React.FC = () => {
         await perfumeEntriesApi.createEntry(entry as any);
       }
       
-      navigate(`/users/${user?.username}`);
+      navigate(-1); // Go back after successful save
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to save entry');
     } finally {
@@ -188,7 +175,7 @@ const PerfumeEntryForm: React.FC = () => {
                     id="type"
                     name="type"
                     value={entry.type}
-                    onChange={handleSelectChange as any}
+                    onChange={handleSelectChange}
                     label="Type"
                     disabled={loading}
                   >
@@ -265,7 +252,7 @@ const PerfumeEntryForm: React.FC = () => {
                       disabled={loading}
                     />
                   }
-                  label="Make this entry public (visible to others)"
+                  label="Make this entry public (visible to other users)"
                 />
               </Grid>
 
