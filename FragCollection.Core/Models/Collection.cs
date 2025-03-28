@@ -1,5 +1,8 @@
+// This class is no longer used. Collection properties have moved to User model.
+// This file will be removed in a future commit after all dependencies are updated.
 namespace FragCollection.Core.Models
 {
+    // @Deprecated - To be removed
     public class Collection
     {
         public Guid Id { get; set; }
@@ -14,6 +17,7 @@ namespace FragCollection.Core.Models
         
         // Navigation properties
         public virtual User User { get; set; } = null!;
-        public virtual ICollection<PerfumeEntry> Entries { get; set; } = new List<PerfumeEntry>();
+        
+        // Removed entries collection since entries now link directly to users
     }
 }
