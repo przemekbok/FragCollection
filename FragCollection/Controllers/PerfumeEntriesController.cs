@@ -11,42 +11,27 @@ namespace FragCollection.Controllers
     public class PerfumeEntriesController : ControllerBase
     {
         private readonly IPerfumeEntryService _perfumeEntryService;
-        private readonly ICollectionService _collectionService;
+        private readonly IUserService _userService;
 
         public PerfumeEntriesController(
             IPerfumeEntryService perfumeEntryService,
-            ICollectionService collectionService)
+            IUserService userService)
         {
             _perfumeEntryService = perfumeEntryService;
-            _collectionService = collectionService;
+            _userService = userService;
         }
 
-        [HttpGet("collection/{collectionId}")]
-        public async Task<ActionResult<IEnumerable<PerfumeEntryResponse>>> GetEntriesByCollection(Guid collectionId)
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<PerfumeEntryResponse>>> GetUserEntries()
         {
-            var collection = await _collectionService.GetCollectionByIdAsync(collectionId);
-            if (collection == null)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid))
             {
-                return NotFound(new { message = "Collection not found" });
+                return Unauthorized(new { message = "Invalid user ID" });
             }
 
-            // Check if the collection is public or if the user is the owner
-            if (!collection.IsPublic)
-            {
-                // Only allow access to private collections for the owner
-                if (User.Identity?.IsAuthenticated != true)
-                {
-                    return Unauthorized(new { message = "Not authenticated" });
-                }
-
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid) || collection.UserId != userGuid)
-                {
-                    return Forbid();
-                }
-            }
-
-            var entries = await _perfumeEntryService.GetEntriesByCollectionIdAsync(collectionId);
+            var entries = await _perfumeEntryService.GetEntriesByUserIdAsync(userGuid);
             return Ok(entries.Select(e => new PerfumeEntryResponse(e)));
         }
 
@@ -62,13 +47,6 @@ namespace FragCollection.Controllers
             // Check if the entry is public or if the user is the owner
             if (!entry.IsPublic)
             {
-                // Get the collection to check ownership
-                var collection = await _collectionService.GetCollectionByIdAsync(entry.CollectionId);
-                if (collection == null)
-                {
-                    return NotFound(new { message = "Collection not found" });
-                }
-
                 // Only allow access to private entries for the owner
                 if (User.Identity?.IsAuthenticated != true)
                 {
@@ -76,7 +54,7 @@ namespace FragCollection.Controllers
                 }
 
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid) || collection.UserId != userGuid)
+                if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid) || entry.UserId != userGuid)
                 {
                     return Forbid();
                 }
@@ -89,17 +67,10 @@ namespace FragCollection.Controllers
         [Authorize]
         public async Task<ActionResult<PerfumeEntryResponse>> CreateEntry([FromBody] PerfumeEntryRequest request)
         {
-            // Verify the collection exists and the user has access
-            var collection = await _collectionService.GetCollectionByIdAsync(request.CollectionId);
-            if (collection == null)
-            {
-                return NotFound(new { message = "Collection not found" });
-            }
-
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid) || collection.UserId != userGuid)
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid))
             {
-                return Forbid();
+                return Unauthorized(new { message = "Invalid user ID" });
             }
 
             var entry = new PerfumeEntry
@@ -111,7 +82,7 @@ namespace FragCollection.Controllers
                 PricePerMl = request.PricePerMl,
                 IsPublic = request.IsPublic,
                 FragranticaUrl = request.FragranticaUrl,
-                CollectionId = request.CollectionId
+                UserId = userGuid
             };
 
             var createdEntry = await _perfumeEntryService.CreateEntryAsync(entry);
@@ -128,32 +99,11 @@ namespace FragCollection.Controllers
                 return NotFound(new { message = "Entry not found" });
             }
 
-            // Verify the user has access to the collection
-            var collection = await _collectionService.GetCollectionByIdAsync(entry.CollectionId);
-            if (collection == null)
-            {
-                return NotFound(new { message = "Collection not found" });
-            }
-
+            // Verify the user has access to the entry
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid) || collection.UserId != userGuid)
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid) || entry.UserId != userGuid)
             {
                 return Forbid();
-            }
-
-            // If changing collection, verify the user has access to the new collection
-            if (request.CollectionId != entry.CollectionId)
-            {
-                var newCollection = await _collectionService.GetCollectionByIdAsync(request.CollectionId);
-                if (newCollection == null)
-                {
-                    return NotFound(new { message = "New collection not found" });
-                }
-
-                if (newCollection.UserId != userGuid)
-                {
-                    return Forbid();
-                }
             }
 
             entry.Name = request.Name;
@@ -163,7 +113,6 @@ namespace FragCollection.Controllers
             entry.PricePerMl = request.PricePerMl;
             entry.IsPublic = request.IsPublic;
             entry.FragranticaUrl = request.FragranticaUrl;
-            entry.CollectionId = request.CollectionId;
 
             await _perfumeEntryService.UpdateEntryAsync(entry);
             return NoContent();
@@ -179,15 +128,9 @@ namespace FragCollection.Controllers
                 return NotFound(new { message = "Entry not found" });
             }
 
-            // Verify the user has access to the collection
-            var collection = await _collectionService.GetCollectionByIdAsync(entry.CollectionId);
-            if (collection == null)
-            {
-                return NotFound(new { message = "Collection not found" });
-            }
-
+            // Verify the user has access to the entry
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid) || collection.UserId != userGuid)
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid) || entry.UserId != userGuid)
             {
                 return Forbid();
             }
@@ -206,15 +149,9 @@ namespace FragCollection.Controllers
                 return NotFound(new { message = "Entry not found" });
             }
 
-            // Verify the user has access to the collection
-            var collection = await _collectionService.GetCollectionByIdAsync(entry.CollectionId);
-            if (collection == null)
-            {
-                return NotFound(new { message = "Collection not found" });
-            }
-
+            // Verify the user has access to the entry
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid) || collection.UserId != userGuid)
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid) || entry.UserId != userGuid)
             {
                 return Forbid();
             }
@@ -233,7 +170,6 @@ namespace FragCollection.Controllers
         public decimal PricePerMl { get; set; }
         public bool IsPublic { get; set; }
         public string? FragranticaUrl { get; set; }
-        public Guid CollectionId { get; set; }
     }
 
     public class UpdateVolumeRequest
@@ -254,7 +190,7 @@ namespace FragCollection.Controllers
         public string? FragranticaUrl { get; set; }
         public DateTime AddedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public Guid CollectionId { get; set; }
+        public Guid UserId { get; set; }
         public PerfumeInfoResponse? PerfumeInfo { get; set; }
 
         public PerfumeEntryResponse(PerfumeEntry entry)
@@ -269,7 +205,7 @@ namespace FragCollection.Controllers
             FragranticaUrl = entry.FragranticaUrl;
             AddedAt = entry.AddedAt;
             UpdatedAt = entry.UpdatedAt;
-            CollectionId = entry.CollectionId;
+            UserId = entry.UserId;
             
             if (entry.PerfumeInfo != null)
             {
